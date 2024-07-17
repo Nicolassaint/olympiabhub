@@ -5,11 +5,13 @@ import os
 from dotenv import load_dotenv
 from olympiabhub.api import OlympiaAPI
 
+
 @pytest.fixture
 def api():
     load_dotenv()
     API_TOKEN = os.getenv("API_TOKEN")
     return OlympiaAPI(token=API_TOKEN)
+
 
 @responses.activate
 def test_chat_nubonyxia(api):
@@ -21,7 +23,7 @@ def test_chat_nubonyxia(api):
         responses.POST,
         "https://api.olympia.bhub.cloud/generate",
         json=expected_response,
-        status=200
+        status=200,
     )
 
     result = api.ChatNubonyxia(model_name, prompt)
@@ -29,6 +31,7 @@ def test_chat_nubonyxia(api):
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/generate"
     assert responses.calls[0].response.status_code == 200
+
 
 @responses.activate
 def test_chat(api):
@@ -40,7 +43,7 @@ def test_chat(api):
         responses.POST,
         "https://api.olympia.bhub.cloud/generate",
         json=expected_response,
-        status=200
+        status=200,
     )
 
     result = api.Chat(model_name, prompt)
@@ -48,6 +51,7 @@ def test_chat(api):
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/generate"
     assert responses.calls[0].response.status_code == 200
+
 
 @responses.activate
 def test_chat_nubonyxia_request_failure(api):
@@ -58,11 +62,12 @@ def test_chat_nubonyxia_request_failure(api):
         responses.POST,
         "https://api.olympia.bhub.cloud/generate",
         json={"error": "test_error"},
-        status=400
+        status=400,
     )
 
     with pytest.raises(requests.exceptions.RequestException):
         api.ChatNubonyxia(model_name, prompt)
+
 
 @responses.activate
 def test_chat_request_failure(api):
@@ -73,7 +78,7 @@ def test_chat_request_failure(api):
         responses.POST,
         "https://api.olympia.bhub.cloud/generate",
         json={"error": "test_error"},
-        status=400
+        status=400,
     )
 
     with pytest.raises(requests.exceptions.RequestException):

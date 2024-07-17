@@ -1,5 +1,6 @@
 import requests
 
+
 class OlympiaAPI:
     def __init__(self, token: str):
         self.token = token
@@ -19,15 +20,12 @@ class OlympiaAPI:
         headers = self._get_headers()
         data = {"model": model_name, "prompt": prompt}
 
-        proxies = {
-            "http": self.Nubonyxia_proxy,
-            "https": self.Nubonyxia_proxy
-        }
+        proxies = {"http": self.Nubonyxia_proxy, "https": self.Nubonyxia_proxy}
 
         session = requests.Session()
-        session.get_adapter("https://").proxy_manager_for(f"http://{self.Nubonyxia_proxy}").proxy_headers[
-            "User-Agent"
-        ] = self.Nubonyxia_user_agent
+        session.get_adapter("https://").proxy_manager_for(
+            f"http://{self.Nubonyxia_proxy}"
+        ).proxy_headers["User-Agent"] = self.Nubonyxia_user_agent
         session.proxies.update(proxies)
 
         try:
@@ -56,4 +54,3 @@ class OlympiaAPI:
                 print(f"Response status code: {response.status_code}")
                 print(f"Response text: {response.text}")
             raise
-
