@@ -3,19 +3,16 @@ import responses
 import requests
 import os
 from dotenv import load_dotenv
-from olympiabhub.api import OlympiaAPI
-
+from olympiabhub import OlympiaAPI
 
 @pytest.fixture
 def api():
     load_dotenv()
-    API_TOKEN = os.getenv("API_TOKEN")
-    return OlympiaAPI(token=API_TOKEN)
-
+    model_name = "test_model"
+    return OlympiaAPI(model=model_name)
 
 @responses.activate
 def test_chat_nubonyxia(api):
-    model_name = "test_model"
     prompt = "test_prompt"
     expected_response = {"response": "test_response"}
 
@@ -26,16 +23,14 @@ def test_chat_nubonyxia(api):
         status=200,
     )
 
-    result = api.ChatNubonyxia(model_name, prompt)
+    result = api.ChatNubonyxia(prompt)
     assert result == expected_response
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/generate"
     assert responses.calls[0].response.status_code == 200
-
 
 @responses.activate
 def test_chat(api):
-    model_name = "test_model"
     prompt = "test_prompt"
     expected_response = {"response": "test_response"}
 
@@ -46,16 +41,14 @@ def test_chat(api):
         status=200,
     )
 
-    result = api.Chat(model_name, prompt)
+    result = api.Chat(prompt)
     assert result == expected_response
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/generate"
     assert responses.calls[0].response.status_code == 200
 
-
 @responses.activate
 def test_chat_nubonyxia_request_failure(api):
-    model_name = "test_model"
     prompt = "test_prompt"
 
     responses.add(
@@ -66,12 +59,10 @@ def test_chat_nubonyxia_request_failure(api):
     )
 
     with pytest.raises(requests.exceptions.RequestException):
-        api.ChatNubonyxia(model_name, prompt)
-
+        api.ChatNubonyxia(prompt)
 
 @responses.activate
 def test_chat_request_failure(api):
-    model_name = "test_model"
     prompt = "test_prompt"
 
     responses.add(
@@ -82,4 +73,4 @@ def test_chat_request_failure(api):
     )
 
     with pytest.raises(requests.exceptions.RequestException):
-        api.Chat(model_name, prompt)
+        api.Chat(prompt)
