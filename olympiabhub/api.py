@@ -1,6 +1,7 @@
 import os
 import requests
 
+
 class OlympiaAPI:
     """
     A class representing the Olympia API.
@@ -25,7 +26,9 @@ class OlympiaAPI:
         if token is None:
             token = os.getenv("OLYMPIA_API_KEY") or os.getenv("OLYMPIA_API_TOKEN")
             if token is None:
-                raise ValueError("Token is required. Please set OLYMPIA_API_KEY or OLYMPIA_API_TOKEN in your environment variables or pass it as a parameter.")
+                raise ValueError(
+                    "Token is required. Please set OLYMPIA_API_KEY or OLYMPIA_API_TOKEN in your environment variables or pass it as a parameter."
+                )
         if proxy is None:
             proxy = os.getenv("PROXY")
         self.token = token

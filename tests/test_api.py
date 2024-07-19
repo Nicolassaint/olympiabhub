@@ -1,15 +1,16 @@
 import pytest
 import responses
 import requests
-import os
 from dotenv import load_dotenv
 from olympiabhub import OlympiaAPI
+
 
 @pytest.fixture
 def api():
     load_dotenv()
     model_name = "test_model"
     return OlympiaAPI(model=model_name)
+
 
 @responses.activate
 def test_chat_nubonyxia(api):
@@ -29,6 +30,7 @@ def test_chat_nubonyxia(api):
     assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/generate"
     assert responses.calls[0].response.status_code == 200
 
+
 @responses.activate
 def test_chat(api):
     prompt = "test_prompt"
@@ -47,6 +49,7 @@ def test_chat(api):
     assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/generate"
     assert responses.calls[0].response.status_code == 200
 
+
 @responses.activate
 def test_chat_nubonyxia_request_failure(api):
     prompt = "test_prompt"
@@ -60,6 +63,7 @@ def test_chat_nubonyxia_request_failure(api):
 
     with pytest.raises(requests.exceptions.RequestException):
         api.ChatNubonyxia(prompt)
+
 
 @responses.activate
 def test_chat_request_failure(api):
