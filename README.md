@@ -16,20 +16,28 @@ pip install olympiabhub
 
 1. Ajouter `OLYMPIA_API_TOKEN` à votre `.env` ou passer `token` en paramètre à `OlympiaAPI`
 
-2. Chat depuis Nubonyxia
+2. Si vous devez utiliser un proxy, ajouter à votre `.env` la variable `PROXY`
+
+3. Chat depuis Nubonyxia
 
 ```py
 from olympiabhub import OlympiaAPI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 model = OlympiaAPI(model)
 
 reponse = model.ChatNubonyxia(prompt)
 ```
 
-3. Chat depuis un environnement sans proxy
+4. Chat depuis un environnement sans proxy
 
 ```py
 from olympiabhub import OlympiaAPI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 model = OlympiaAPI(model)
 
