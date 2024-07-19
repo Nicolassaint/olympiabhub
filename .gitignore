@@ -1,7 +1,8 @@
 .env
-test.py
+.gitignore
 .pytest_cache/
 __pycache__/
 dist/
 build/
 OlympicGames.egg-info/
+test.py
