@@ -174,3 +174,37 @@ def test_get_embedding_models_request_failure(api):
 
     with pytest.raises(requests.exceptions.RequestException):
         api.get_embedding_models()
+
+
+@responses.activate
+def test_create_embedding_nubonyxia(api):
+    texts = ["test_text1", "test_text2"]
+    expected_response = {"embeddings": [[0.1, 0.2], [0.3, 0.4]]}
+
+    responses.add(
+        responses.POST,
+        "https://api.olympia.bhub.cloud/embedding",
+        json=expected_response,
+        status=200,
+    )
+
+    result = api.create_embedding_nubonyxia(texts)
+    assert result == expected_response
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/embedding"
+    assert responses.calls[0].response.status_code == 200
+
+
+@responses.activate
+def test_create_embedding_nubonyxia_request_failure(api):
+    texts = ["test_text1", "test_text2"]
+
+    responses.add(
+        responses.POST,
+        "https://api.olympia.bhub.cloud/embedding",
+        json={"error": "test_error"},
+        status=400,
+    )
+
+    with pytest.raises(requests.exceptions.RequestException):
+        api.create_embedding_nubonyxia(texts)

@@ -114,9 +114,9 @@ class OlympiaAPI:
                 print(f"Response text: {response.text}")
             raise
 
-    def create_embedding(self, texts: list[str]) -> dict:
+    def create_embedding_nubonyxia(self, texts: list[str]) -> dict:
         """
-        Create embeddings for the given texts.
+        Create embeddings for the given texts using Nubonyxia proxy configuration.
 
         Args:
             texts (list[str]): List of texts to create embeddings for.
@@ -134,6 +134,47 @@ class OlympiaAPI:
             "texts": texts
         }
 
+        proxies = {"http": self.Nubonyxia_proxy, "https": self.Nubonyxia_proxy}
+        
+        session = requests.Session()
+        session.get_adapter("https://").proxy_manager_for(
+            f"http://{self.Nubonyxia_proxy}"
+        ).proxy_headers["User-Agent"] = self.Nubonyxia_user_agent
+        session.proxies.update(proxies)
+
+        response = None
+        try:
+            response = session.post(url, headers=headers, json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            if response is not None:
+                print(f"Response status code: {response.status_code}")
+                print(f"Response text: {response.text}")
+            raise
+
+    def create_embedding(self, texts: list[str]) -> dict:
+        """
+        Create embeddings for the given texts using direct connection.
+
+        Args:
+            texts (list[str]): List of texts to create embeddings for.
+
+        Returns:
+            dict: The response JSON containing the embeddings.
+
+        Raises:
+            requests.exceptions.RequestException: If the API request fails.
+        """
+        url = f"{self.base_url}/embedding"
+        headers = self._get_headers()
+        data = {
+            "model": self.model,
+            "texts": texts
+        }
+
+        response = None
         try:
             response = requests.post(url, headers=headers, json=data)
             response.raise_for_status()
