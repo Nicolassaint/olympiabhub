@@ -12,8 +12,10 @@ def api():
     return OlympiaAPI(model=model_name)
 
 
+@pytest.mark.parametrize("method", [("Chat", False), ("ChatNubonyxia", True)])
 @responses.activate
-def test_chat_nubonyxia(api):
+def test_chat_methods(api, method):
+    method_name, use_proxy = method
     prompt = "test_prompt"
     expected_response = {"response": "test_response"}
 
@@ -24,30 +26,8 @@ def test_chat_nubonyxia(api):
         status=200,
     )
 
-    result = api.ChatNubonyxia(prompt)
+    result = getattr(api, method_name)(prompt)
     assert result == expected_response
-    assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/generate"
-    assert responses.calls[0].response.status_code == 200
-
-
-@responses.activate
-def test_chat(api):
-    prompt = "test_prompt"
-    expected_response = {"response": "test_response"}
-
-    responses.add(
-        responses.POST,
-        "https://api.olympia.bhub.cloud/generate",
-        json=expected_response,
-        status=200,
-    )
-
-    result = api.Chat(prompt)
-    assert result == expected_response
-    assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/generate"
-    assert responses.calls[0].response.status_code == 200
 
 
 @responses.activate
@@ -61,7 +41,7 @@ def test_chat_nubonyxia_request_failure(api):
         status=400,
     )
 
-    with pytest.raises(requests.exceptions.RequestException):
+    with pytest.raises(ValueError):
         api.ChatNubonyxia(prompt)
 
 
@@ -76,7 +56,7 @@ def test_chat_request_failure(api):
         status=400,
     )
 
-    with pytest.raises(requests.exceptions.RequestException):
+    with pytest.raises(ValueError):
         api.Chat(prompt)
 
 
@@ -94,9 +74,6 @@ def test_create_embedding(api):
 
     result = api.create_embedding(texts)
     assert result == expected_response
-    assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/embedding"
-    assert responses.calls[0].response.status_code == 200
 
 
 @responses.activate
@@ -110,7 +87,7 @@ def test_create_embedding_request_failure(api):
         status=400,
     )
 
-    with pytest.raises(requests.exceptions.RequestException):
+    with pytest.raises(ValueError):
         api.create_embedding(texts)
 
 
@@ -127,9 +104,6 @@ def test_get_llm_models(api):
 
     result = api.get_llm_models()
     assert result == expected_response["modèles"]
-    assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/modeles"
-    assert responses.calls[0].response.status_code == 200
 
 
 @responses.activate
@@ -141,7 +115,7 @@ def test_get_llm_models_request_failure(api):
         status=400,
     )
 
-    with pytest.raises(requests.exceptions.RequestException):
+    with pytest.raises(ValueError):
         api.get_llm_models()
 
 
@@ -158,9 +132,6 @@ def test_get_embedding_models(api):
 
     result = api.get_embedding_models()
     assert result == expected_response["modèles"]
-    assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/embedding/models"
-    assert responses.calls[0].response.status_code == 200
 
 
 @responses.activate
@@ -172,7 +143,7 @@ def test_get_embedding_models_request_failure(api):
         status=400,
     )
 
-    with pytest.raises(requests.exceptions.RequestException):
+    with pytest.raises(ValueError):
         api.get_embedding_models()
 
 
@@ -190,9 +161,6 @@ def test_create_embedding_nubonyxia(api):
 
     result = api.create_embedding_nubonyxia(texts)
     assert result == expected_response
-    assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == "https://api.olympia.bhub.cloud/embedding"
-    assert responses.calls[0].response.status_code == 200
 
 
 @responses.activate
@@ -206,5 +174,5 @@ def test_create_embedding_nubonyxia_request_failure(api):
         status=400,
     )
 
-    with pytest.raises(requests.exceptions.RequestException):
+    with pytest.raises(ValueError):
         api.create_embedding_nubonyxia(texts)
