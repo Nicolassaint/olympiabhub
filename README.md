@@ -18,28 +18,55 @@ pip install olympiabhub
 
 2. Si vous devez utiliser un proxy, ajouter à votre `.env` la variable `PROXY`
 
-3. Chat depuis Nubonyxia
+### Chat
 
-```py
+#### Chat depuis Nubonyxia
+
+```python
 from olympiabhub import OlympiaAPI
 from dotenv import load_dotenv
 
 load_dotenv()
 
 model = OlympiaAPI(model)
-
 reponse = model.ChatNubonyxia(prompt)
 ```
 
-4. Chat depuis un environnement sans proxy
+#### Chat depuis un environnement sans proxy
 
-```py
+```python
 from olympiabhub import OlympiaAPI
 from dotenv import load_dotenv
 
 load_dotenv()
 
 model = OlympiaAPI(model)
-
 reponse = model.Chat(prompt)
+```
+
+### Embeddings
+
+Créer des embeddings pour une liste de textes :
+
+```python
+model = OlympiaAPI(model)
+embeddings = model.create_embedding(texts=["votre texte", "un autre texte"])
+```
+
+### Liste des modèles disponibles
+
+#### Obtenir la liste des modèles LLM
+
+```python
+model = OlympiaAPI(model)
+llm_models = model.get_llm_models()
+print("Modèles LLM disponibles:", llm_models)
+```
+
+#### Obtenir la liste des modèles d'embedding
+
+```python
+model = OlympiaAPI(model)
+embedding_models = model.get_embedding_models()
+print("Modèles d'embedding disponibles:", embedding_models)
 ```

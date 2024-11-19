@@ -113,3 +113,82 @@ class OlympiaAPI:
                 print(f"Response status code: {response.status_code}")
                 print(f"Response text: {response.text}")
             raise
+
+    def create_embedding(self, texts: list[str]) -> dict:
+        """
+        Create embeddings for the given texts.
+
+        Args:
+            texts (list[str]): List of texts to create embeddings for.
+
+        Returns:
+            dict: The response JSON containing the embeddings.
+
+        Raises:
+            requests.exceptions.RequestException: If the API request fails.
+        """
+        url = f"{self.base_url}/embedding"
+        headers = self._get_headers()
+        data = {
+            "model": self.model,
+            "texts": texts
+        }
+
+        try:
+            response = requests.post(url, headers=headers, json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            if response is not None:
+                print(f"Response status code: {response.status_code}")
+                print(f"Response text: {response.text}")
+            raise
+
+    def get_llm_models(self) -> list[str]:
+        """
+        Get the list of available LLM models.
+
+        Returns:
+            list[str]: List of available model names.
+
+        Raises:
+            requests.exceptions.RequestException: If the API request fails.
+        """
+        url = f"{self.base_url}/modeles"
+        headers = self._get_headers()
+
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.json()["modèles"]
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            if response is not None:
+                print(f"Response status code: {response.status_code}")
+                print(f"Response text: {response.text}")
+            raise
+
+    def get_embedding_models(self) -> list[str]:
+        """
+        Get the list of available embedding models.
+
+        Returns:
+            list[str]: List of available embedding model names.
+
+        Raises:
+            requests.exceptions.RequestException: If the API request fails.
+        """
+        url = f"{self.base_url}/embedding/models"
+        headers = self._get_headers()
+
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.json()["modèles"]
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            if response is not None:
+                print(f"Response status code: {response.status_code}")
+                print(f"Response text: {response.text}")
+            raise

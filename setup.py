@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="Olympiabhub",
-    version="0.0.4",
+    version="0.0.5",
     author="Bercy Hub",
     author_email="nicolas.saint@finances.gouv.fr",
     description="Librairie pour interagir avec l'API Olympia.",
