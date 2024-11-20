@@ -138,6 +138,6 @@ class OlympiaAPI:
         """Get available embedding models. Set use_proxy=True to use Nubonyxia proxy."""
         return self._make_request(
             method="GET", 
-            endpoint="embedding/models",
+            endpoint="embedding/modeles",
             use_proxy=use_proxy
         )["modèles"]

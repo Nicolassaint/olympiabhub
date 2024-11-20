@@ -125,7 +125,7 @@ def test_get_embedding_models(api):
 
     responses.add(
         responses.GET,
-        "https://api.olympia.bhub.cloud/embedding/models",
+        "https://api.olympia.bhub.cloud/embedding/modeles",
         json=expected_response,
         status=200,
     )
@@ -138,7 +138,7 @@ def test_get_embedding_models(api):
 def test_get_embedding_models_request_failure(api):
     responses.add(
         responses.GET,
-        "https://api.olympia.bhub.cloud/embedding/models",
+        "https://api.olympia.bhub.cloud/embedding/modeles",
         json={"error": "test_error"},
         status=400,
     )
