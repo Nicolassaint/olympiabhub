@@ -43,6 +43,8 @@ response = api.chat_completion(
     temperature=0.7,
     max_tokens=500
 )
+# Afficher la réponse
+print(response['choices'][0]['message']['content'])
 
 # Avec proxy Nubonyxia
 response = api.chat_completion_nubonyxia(
@@ -50,6 +52,8 @@ response = api.chat_completion_nubonyxia(
     temperature=0.7,
     max_tokens=500
 )
+# Afficher la réponse
+print(response['choices'][0]['message']['content'])
 ```
 
 ### Completions (texte simple)
@@ -61,6 +65,8 @@ response = api.completion(
     temperature=0.7,
     max_tokens=500
 )
+# Afficher la réponse
+print(response['choices'][0]['text'])
 
 # Avec proxy Nubonyxia
 response = api.completion_nubonyxia(
@@ -68,6 +74,8 @@ response = api.completion_nubonyxia(
     temperature=0.7,
     max_tokens=500
 )
+# Afficher la réponse
+print(response['choices'][0]['text'])
 ```
 
 ### Embeddings
@@ -81,9 +89,15 @@ texts = [
 
 # Sans proxy
 embeddings = api.embedding(texts=texts)
+# Afficher les embeddings
+for i, embedding in enumerate(embeddings['data']):
+    print(f"Embedding {i+1}:", embedding['embedding'][:5], "...") # Affiche les 5 premières valeurs
 
 # Avec proxy Nubonyxia
 embeddings = api.embedding_nubonyxia(texts=texts)
+# Afficher les embeddings
+for i, embedding in enumerate(embeddings['data']):
+    print(f"Embedding {i+1}:", embedding['embedding'][:5], "...") # Affiche les 5 premières valeurs
 ```
 
 ### Liste des modèles disponibles
@@ -96,6 +110,7 @@ print("Modèles LLM disponibles:", llm_models)
 
 # Avec proxy Nubonyxia
 llm_models = api.get_llm_models_nubonyxia()
+print("Modèles LLM disponibles:", llm_models)
 
 # Obtenir la liste des modèles d'embedding
 # Sans proxy
@@ -104,6 +119,7 @@ print("Modèles d'embedding disponibles:", embedding_models)
 
 # Avec proxy Nubonyxia
 embedding_models = api.get_embedding_models_nubonyxia()
+print("Modèles d'embedding disponibles:", embedding_models)
 ```
 
 ## Paramètres disponibles
