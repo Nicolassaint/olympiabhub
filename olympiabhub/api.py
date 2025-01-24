@@ -122,20 +122,6 @@ class OlympiaAPI:
             logger.error(f"Unexpected error: {e}")
             raise RuntimeError(f"Unexpected error occurred: {e}")
 
-    def Chat(self, prompt: str) -> Dict[str, Any]:
-        return self._make_request(
-            method="POST",
-            endpoint="generate",
-            data={"model": self.model, "prompt": prompt},
-        )
-
-    def ChatNubonyxia(self, prompt: str) -> Dict[str, Any]:
-        return self._make_request(
-            method="POST",
-            endpoint="generate",
-            data={"model": self.model, "prompt": prompt},
-            use_proxy=True,
-        )
 
     def chat_completion(
         self,
