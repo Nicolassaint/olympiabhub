@@ -16,7 +16,10 @@ pip install olympiabhub
    - Via variable d'environnement : `OLYMPIA_API_TOKEN` ou `OLYMPIA_API_KEY` dans votre `.env`
    - Ou directement dans le code : `token="votre-token"`
 
-2. Pour utiliser via Nubonyxia, ajouter la variable `PROXY` dans votre `.env`
+2. Pour utiliser via Nubonyxia, ajouter la variable dans votre `.env` :
+```
+PROXY=127.0.0.1:8080  # Format: IP:PORT
+```
 
 ## Utilisation
 
