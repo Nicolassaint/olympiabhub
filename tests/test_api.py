@@ -1,6 +1,5 @@
 import pytest
 import responses
-import requests
 from dotenv import load_dotenv
 from olympiabhub import OlympiaAPI
 
@@ -12,167 +11,125 @@ def api():
     return OlympiaAPI(model=model_name)
 
 
-@pytest.mark.parametrize("method", [("Chat", False), ("ChatNubonyxia", True)])
+@pytest.mark.parametrize(
+    "method", 
+    [
+        ("chat_completion", False),
+        ("chat_completion_nubonyxia", True),
+        ("completion", False),
+        ("completion_nubonyxia", True),
+        ("embedding", False),
+        ("embedding_nubonyxia", True)
+    ]
+)
 @responses.activate
-def test_chat_methods(api, method):
+def test_api_methods(api, method):
     method_name, use_proxy = method
-    prompt = "test_prompt"
+    
+    # Préparation des données selon la méthode
+    if "chat_completion" in method_name:
+        data = [{"role": "user", "content": "test message"}]
+        endpoint = "v1/chat/completions"
+    elif "completion" in method_name:
+        data = "test prompt"
+        endpoint = "v1/completions"
+    else:  # embedding
+        data = ["test text1", "test text2"]
+        endpoint = "v1/embeddings"
+
     expected_response = {"response": "test_response"}
 
+    # Ajout de la mock response
     responses.add(
         responses.POST,
-        "https://api.olympia.bhub.cloud/generate",
+        f"https://api.olympia.bhub.cloud/{endpoint}",
         json=expected_response,
         status=200,
     )
 
-    result = getattr(api, method_name)(prompt)
+    # Appel de la méthode
+    result = getattr(api, method_name)(data)
     assert result == expected_response
 
 
+@pytest.mark.parametrize(
+    "method",
+    [
+        ("chat_completion", "v1/chat/completions"),
+        ("chat_completion_nubonyxia", "v1/chat/completions"),
+        ("completion", "v1/completions"),
+        ("completion_nubonyxia", "v1/completions"),
+        ("embedding", "v1/embeddings"),
+        ("embedding_nubonyxia", "v1/embeddings"),
+    ]
+)
 @responses.activate
-def test_chat_nubonyxia_request_failure(api):
-    prompt = "test_prompt"
+def test_api_methods_failure(api, method):
+    method_name, endpoint = method
+    
+    # Préparation des données selon la méthode
+    if "chat_completion" in method_name:
+        data = [{"role": "user", "content": "test message"}]
+    elif "completion" in method_name:
+        data = "test prompt"
+    else:  # embedding
+        data = ["test text1", "test text2"]
 
     responses.add(
         responses.POST,
-        "https://api.olympia.bhub.cloud/generate",
+        f"https://api.olympia.bhub.cloud/{endpoint}",
         json={"error": "test_error"},
         status=400,
     )
 
     with pytest.raises(ValueError):
-        api.ChatNubonyxia(prompt)
+        getattr(api, method_name)(data)
 
 
+@pytest.mark.parametrize(
+    "method",
+    [
+        ("get_llm_models", "modeles", False),
+        ("get_llm_models_nubonyxia", "modeles", True),
+        ("get_embedding_models", "embeddings", False),
+        ("get_embedding_models_nubonyxia", "embeddings", True),
+    ]
+)
 @responses.activate
-def test_chat_request_failure(api):
-    prompt = "test_prompt"
-
-    responses.add(
-        responses.POST,
-        "https://api.olympia.bhub.cloud/generate",
-        json={"error": "test_error"},
-        status=400,
-    )
-
-    with pytest.raises(ValueError):
-        api.Chat(prompt)
-
-
-@responses.activate
-def test_create_embedding(api):
-    texts = ["test_text1", "test_text2"]
-    expected_response = {"embeddings": [[0.1, 0.2], [0.3, 0.4]]}
-
-    responses.add(
-        responses.POST,
-        "https://api.olympia.bhub.cloud/embedding",
-        json=expected_response,
-        status=200,
-    )
-
-    result = api.create_embedding(texts)
-    assert result == expected_response
-
-
-@responses.activate
-def test_create_embedding_request_failure(api):
-    texts = ["test_text1", "test_text2"]
-
-    responses.add(
-        responses.POST,
-        "https://api.olympia.bhub.cloud/embedding",
-        json={"error": "test_error"},
-        status=400,
-    )
-
-    with pytest.raises(ValueError):
-        api.create_embedding(texts)
-
-
-@responses.activate
-def test_get_llm_models(api):
+def test_get_models(api, method):
+    method_name, endpoint, use_proxy = method
     expected_response = {"modèles": ["model1", "model2"]}
 
     responses.add(
         responses.GET,
-        "https://api.olympia.bhub.cloud/modeles",
+        f"https://api.olympia.bhub.cloud/{endpoint}",
         json=expected_response,
         status=200,
     )
 
-    result = api.get_llm_models()
+    result = getattr(api, method_name)()
     assert result == expected_response["modèles"]
 
 
+@pytest.mark.parametrize(
+    "method",
+    [
+        ("get_llm_models", "modeles"),
+        ("get_llm_models_nubonyxia", "modeles"),
+        ("get_embedding_models", "embeddings"),
+        ("get_embedding_models_nubonyxia", "embeddings"),
+    ]
+)
 @responses.activate
-def test_get_llm_models_request_failure(api):
+def test_get_models_failure(api, method):
+    method_name, endpoint = method
+    
     responses.add(
         responses.GET,
-        "https://api.olympia.bhub.cloud/modeles",
+        f"https://api.olympia.bhub.cloud/{endpoint}",
         json={"error": "test_error"},
         status=400,
     )
 
     with pytest.raises(ValueError):
-        api.get_llm_models()
-
-
-@responses.activate
-def test_get_embedding_models(api):
-    expected_response = {"modèles": ["embedding1", "embedding2"]}
-
-    responses.add(
-        responses.GET,
-        "https://api.olympia.bhub.cloud/embedding/modeles",
-        json=expected_response,
-        status=200,
-    )
-
-    result = api.get_embedding_models()
-    assert result == expected_response["modèles"]
-
-
-@responses.activate
-def test_get_embedding_models_request_failure(api):
-    responses.add(
-        responses.GET,
-        "https://api.olympia.bhub.cloud/embedding/modeles",
-        json={"error": "test_error"},
-        status=400,
-    )
-
-    with pytest.raises(ValueError):
-        api.get_embedding_models()
-
-
-@responses.activate
-def test_create_embedding_nubonyxia(api):
-    texts = ["test_text1", "test_text2"]
-    expected_response = {"embeddings": [[0.1, 0.2], [0.3, 0.4]]}
-
-    responses.add(
-        responses.POST,
-        "https://api.olympia.bhub.cloud/embedding",
-        json=expected_response,
-        status=200,
-    )
-
-    result = api.create_embedding_nubonyxia(texts)
-    assert result == expected_response
-
-
-@responses.activate
-def test_create_embedding_nubonyxia_request_failure(api):
-    texts = ["test_text1", "test_text2"]
-
-    responses.add(
-        responses.POST,
-        "https://api.olympia.bhub.cloud/embedding",
-        json={"error": "test_error"},
-        status=400,
-    )
-
-    with pytest.raises(ValueError):
-        api.create_embedding_nubonyxia(texts)
+        getattr(api, method_name)()
